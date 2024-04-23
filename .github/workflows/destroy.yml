@@ -31,15 +31,17 @@ jobs:
           echo "S3_BUCKET_EXISTS=true" >> $GITHUB_ENV
         fi
 
-    - name: Prepare backend configuration
+    - name: Copy state from S3 to local (if exists)
+      if: env.S3_BUCKET_EXISTS == 'true'
       run: |
-        if [ "${{ env.S3_BUCKET_EXISTS }}" = "true" ]; then
-          cp backend/remote.tf backend.tf
-        else
-          cp backend/local.tf backend.tf
-        fi
+        aws s3 cp s3://postech-5soat-grupo-25-tfstate/backend/state  terraform.tfstate
 
-    - name: Run terraform init
+    - name: Prepare local backend configuration
+      run: |
+        echo "Preparing local backend configuration..."
+        > backend.tf
+
+    - name: Initialize Terraform with local backend
       run: terraform init
 
     - name: Run terraform destroy
