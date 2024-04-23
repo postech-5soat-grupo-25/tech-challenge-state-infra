@@ -48,4 +48,4 @@ jobs:
     - name: Run terraform re-init w/ remote backend
       run: |
         cp backend/remote.tf backend.tf
-        terraform init --input=false --migrate-state
+        terraform init -input=false --migrate-state
