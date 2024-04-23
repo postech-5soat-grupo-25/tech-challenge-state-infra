@@ -34,20 +34,9 @@ jobs:
     - name: Prepare backend configuration
       run: |
         if [ "${{ env.S3_BUCKET_EXISTS }}" = "true" ]; then
-          cat <<EOF > backend.tf
-          terraform {
-            backend "s3" {
-              bucket         = "postech-5soat-grupo-25-tfstate"
-              key            = "backend/state"
-              region         = "us-east-1"
-              dynamodb_table = "postech-5soat-grupo-25-tflocks"
-              encrypt        = true
-            }
-          }
-          EOF
+          cp backend/remote.tf backend.tf
         else
-          echo "Utilizando backend local..."
-          > backend.tf
+          cp backend/local.tf backend.tf
         fi
 
     - name: Run terraform init
