@@ -10,8 +10,9 @@ locals {
 
 # Bucket S3 para armazenar o estado do Terraform
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = "${local.prefix}-tfstate"
-  acl    = "private"
+  bucket        = "${local.prefix}-tfstate"
+  force_destroy = true
+  acl           = "private"
 }
 
 # Habilita o versionamento do Bucket S3 para manter um histórico dos estados do Terraform
