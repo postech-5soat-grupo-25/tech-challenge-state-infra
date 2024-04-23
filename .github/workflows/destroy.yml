@@ -1,0 +1,57 @@
+name: '🧨 Terraform Backend Destroy'
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
+
+jobs:
+  terraform:
+    name: 'Destroy'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.0.0
+
+    - name: Check local/remote state
+      id: check_s3
+      run: |
+        if aws s3 ls "s3://postech-5soat-grupo-25-tfstate" 2>&1 | grep -q 'NoSuchBucket'; then
+          echo "S3_BUCKET_EXISTS=false" >> $GITHUB_ENV
+        else
+          echo "S3_BUCKET_EXISTS=true" >> $GITHUB_ENV
+        fi
+
+    - name: Prepare backend configuration
+      run: |
+        if [ "${{ env.S3_BUCKET_EXISTS }}" = "true" ]; then
+          cat <<EOF > backend.tf
+          terraform {
+            backend "s3" {
+              bucket         = "postech-5soat-grupo-25-tfstate"
+              key            = "backend/state"
+              region         = "us-east-1"
+              dynamodb_table = "postech-5soat-grupo-25-tflocks"
+              encrypt        = true
+            }
+          }
+          EOF
+        else
+          echo "Utilizando backend local..."
+          > backend.tf
+        fi
+
+    - name: Run terraform init
+      run: terraform init
+
+    - name: Run terraform destroy
+      run: terraform destroy --auto-approve
