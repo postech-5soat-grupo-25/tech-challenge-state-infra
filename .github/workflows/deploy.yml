@@ -46,4 +46,4 @@ jobs:
       run: terraform apply --auto-approve
 
     - name: Migrate local state to remote
-      run: aws s3 cp terraform.tfstate s3://postech-5soat-grupo-25-tfstate/backend/state/
+      run: aws s3 cp terraform.tfstate s3://postech-5soat-grupo-25-tfstate/backend/state
