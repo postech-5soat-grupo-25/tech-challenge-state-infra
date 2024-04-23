@@ -45,7 +45,5 @@ jobs:
     - name: Run terraform apply
       run: terraform apply --auto-approve
 
-    - name: Run terraform re-init w/ remote backend
-      run: |
-        cp backend/remote.tf backend.tf
-        terraform init -input=false --migrate-state
+    - name: Migrate local state to remote
+      run: aws s3 cp terraform.tfstate s3://postech-5soat-grupo-25-tfstate/backend/state/
