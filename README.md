@@ -1,4 +1,4 @@
-# .tfstate | PosTech 5SOAT • Grupo 25
+# `.tfstate` | PosTech 5SOAT • Grupo 25
 
 Este repositório contém os arquivos necessários para configurar um backend para o Terraform usando o Amazon S3 e o DynamoDB. O objetivo é fornecer uma solução robusta e segura para o armazenamento do estado do Terraform e o bloqueio de estado, respectivamente.
 
